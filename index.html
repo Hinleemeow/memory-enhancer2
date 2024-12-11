@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Enhancement Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        #game-container {
+            margin-top: 20px;
+        }
+        #input-section {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #difficulty-settings, #game-info {
+            margin: 20px;
+        }
+        #level-display {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Enhancement Game</h1>
+
+    <div id="difficulty-settings">
+        <h3>Difficulty Settings</h3>
+        <button onclick="setDifficulty(5)">Easy (5 sec)</button>
+        <button onclick="setDifficulty(3)">Medium (3 sec)</button>
+        <button onclick="setDifficulty(2)">Hard (2 sec)</button>
+    </div>
+
+    <div id="game-info">
+        <p id="level-display">Level: 1</p>
+        <p id="instructions">Press "Start Game" to begin!</p>
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="game-container">
+        <p id="display-area" style="font-size: 24px; font-weight: bold;"></p>
+    </div>
+
+    <div id="input-section">
+        <input type="text" id="user-input" placeholder="Type here...">
+        <button onclick="submitAnswer()">Submit</button>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let currentSequence = [];
+        let displayTime = 5; // Default difficulty is Easy
+        let mode = "numbers"; // Default mode
+
+        function setDifficulty(seconds) {
+            displayTime = seconds;
+            alert(`Difficulty set to ${seconds} seconds!`);
+        }
+
+        function startGame() {
+            document.getElementById('level-display').textContent = `Level: ${currentLevel}`;
+            generateSequence();
+        }
+
+        function generateSequence() {
+            const displayArea = document.getElementById('display-area');
+            currentSequence = [];
+            const length = 4 + (currentLevel - 1); // Increase length per level
+
+            if (mode === "numbers") {
+                for (let i = 0; i < length; i++) {
+                    currentSequence.push(Math.floor(Math.random() * 10));
+                }
+            } else {
+                const words = ["apple", "banana", "cherry", "dog", "elephant", "frog", "guitar", "house", "igloo", "jacket"];
+                for (let i = 0; i < length; i++) {
+                    currentSequence.push(words[Math.floor(Math.random() * words.length)]);
+                }
+            }
+
+            displayArea.textContent = currentSequence.join(" ");
+
+            setTimeout(() => {
+                displayArea.textContent = "";
+            }, displayTime * 1000);
+        }
+
+        function submitAnswer() {
+            const userInput = document.getElementById('user-input').value.split(" ");
+            const displayArea = document.getElementById('display-area');
+
+            let correct = true;
+            let result = [];
+            for (let i = 0; i < currentSequence.length; i++) {
+                if (userInput[i] == currentSequence[i]) {
+                    result.push(`<span style='color: green;'>${currentSequence[i]}</span>`);
+                } else {
+                    result.push(`<span style='color: red;'>${currentSequence[i]}</span>`);
+                    correct = false;
+                }
+            }
+
+            displayArea.innerHTML = result.join(" ");
+
+            if (correct) {
+                alert("Correct! Moving to next level.");
+                currentLevel++;
+                startGame();
+            } else {
+                alert("Incorrect! Try again.");
+                startGame();
+            }
+
+            document.getElementById('user-input').value = "";
+        }
+    </script>
+</body>
+</html>
